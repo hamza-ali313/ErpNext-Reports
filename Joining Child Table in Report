@@ -1,0 +1,19 @@
+SELECT
+    i.name AS "ID",
+    i.date AS "Date",
+    i.on_call_patient AS "Patient Name",
+    ct.department as 'Department',
+    ct.item_name as 'Service',
+    i.cash as 'Cash:Check',
+    SUM(i.received_amount) AS "Received Amount",
+    SUM(i.total_discount_amount) AS "Total Zakat Amount",
+    SUM(i.total_bill_amount) AS "Total Bill Amount",
+    SUM(i.net_total) AS "Net Total",
+    SUM(i.line_discount) AS "Line Zakat Amount"
+FROM
+    `tabAppointment Patients` i
+JOIN /// Here I am joining the Child Table With the Parent Table so tabServices Acquired CT is the child table and ct is its alias 
+    `tabServices Acquired CT` ct 
+ON
+    ct.parent = i.name  /// There is a column in the child table with the name of the parent that is the ID of the parent form where Child table is linked with and name
+                        //// is the field/column in parent form so only those columns will come in which ct.parent = i.name 
