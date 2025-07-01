@@ -1,0 +1,55 @@
+SELECT 
+    ROW_NUMBER() OVER () AS `S. No.`,
+    ss.employee AS `Emp. Code`,
+    ss.employee_name AS `Name`,
+    ss.designation AS `Designation`,
+    ss.department AS `Department`,
+    ss.salarys AS `Basic Salary`,
+    ss.medical AS `Medical Allowance`,
+    ss.convence + ss.house_rent + ss.utility AS `Other Allowances`,
+    ss.monthly_salary AS `Gross Salary`,
+    (CASE WHEN se.salary_component = 'Arrears' THEN se.amount ELSE 0 END) AS `Arrears`,
+    (CASE WHEN sd.salary_component = 'Provident Fund' THEN sd.amount ELSE 0 END) AS `P.F`
+    
+FROM 
+`tabSalary Slip` ss
+JOIN 
+`tabSalary Component` se 
+ON ss.name = se.parent
+AND se.parentfield = 'earnings'
+JOIN `tabSalary Component` sd 
+ON ss.name = sd.parent
+AND sd.parentfield = 'deductions'
+
+
+
+frappe.query_reports["Salary Slip"] = {
+    "filters": [
+        {
+            "fieldname": "start_date",
+            "label": "From",
+            "fieldtype": "Date",
+            "default": "2025-01-01"
+        },
+        {
+            "fieldname": "end_date",
+            "label": "To",
+            "fieldtype": "Date",
+            "default": frappe.datetime.get_today()  // Removed quotes so it's evaluated
+        },
+        {
+            "fieldname": "employee",
+            "label": "Employee",
+            "fieldtype": "Link",
+            "options": "Employee",
+            "default": "HR-EMP-1115"
+        },
+        {
+            "fieldname": "department",
+            "label": "Department",
+            "fieldtype": "Link",
+            "options": "Department",
+            "default": "WATER PUMP"
+        }
+    ]
+};
